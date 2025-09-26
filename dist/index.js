@@ -1,17 +1,17 @@
 "use strict";
 let currentInput = '0';
-let operator = '';
 let previousInput = '';
+let operator = '';
 function updateDisplay() {
     const display = document.getElementById('display');
     display.value = currentInput;
 }
 function appendToDisplay(value) {
     if (['+', '-', '*', '/'].includes(value)) {
-        if (currentInput !== '' && !['+', '-', '*', '/'].includes(currentInput.slice(-1))) {
+        if (operator === '' && currentInput !== '') {
             previousInput = currentInput;
-            currentInput += value;
             operator = value;
+            currentInput = '';
         }
     }
     else {
@@ -32,28 +32,49 @@ function clearDisplay() {
 }
 function deleteLast() {
     currentInput = currentInput.slice(0, -1);
-    if (currentInput === '')
+    if (currentInput === '') {
         currentInput = '0';
+    }
     updateDisplay();
 }
 function calculate() {
-    try {
-        const result = eval(currentInput);
-        currentInput = result.toString();
-        operator = '';
-        previousInput = '';
-        updateDisplay();
+    const num1 = parseFloat(previousInput);
+    const num2 = parseFloat(currentInput);
+    let result;
+    if (isNaN(num1) || isNaN(num2)) {
+        return;
     }
-    catch (_a) {
-        alert("Expresión inválida");
+    switch (operator) {
+        case '+':
+            result = num1 + num2;
+            break;
+        case '-':
+            result = num1 - num2;
+            break;
+        case '*':
+            result = num1 * num2;
+            break;
+        case '/':
+            if (num2 === 0) {
+                alert("No se puede dividir por cero");
+                return;
+            }
+            result = num1 / num2;
+            break;
+        default:
+            return;
     }
+    currentInput = result.toString();
+    operator = '';
+    previousInput = '';
+    updateDisplay();
 }
 function setupEventListeners() {
     const buttons = document.querySelectorAll('.btn');
-    buttons.forEach(button => {
-        button.addEventListener('click', () => {
-            const action = button.getAttribute('data-action');
-            const value = button.getAttribute('data-value');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const action = btn.getAttribute('data-action');
+            const value = btn.getAttribute('data-value');
             if (action === 'clear') {
                 clearDisplay();
             }
@@ -68,10 +89,10 @@ function setupEventListeners() {
             }
         });
     });
-    // Teclado
+    // Soporte para teclado (opcional)
     document.addEventListener('keydown', (e) => {
         const key = e.key;
-        if (!isNaN(parseInt(key)) || ['+', '-', '*', '/', '.'].includes(key)) {
+        if (!isNaN(Number(key)) || ['+', '-', '*', '/', '.'].includes(key)) {
             appendToDisplay(key);
         }
         else if (key === 'Enter') {

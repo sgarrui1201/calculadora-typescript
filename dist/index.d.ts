@@ -1,6 +1,6 @@
 declare let currentInput: string;
-declare let operator: string;
 declare let previousInput: string;
+declare let operator: string;
 declare function updateDisplay(): void;
 declare function appendToDisplay(value: string): void;
 declare function clearDisplay(): void;
