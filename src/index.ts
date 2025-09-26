@@ -94,7 +94,7 @@ function setupEventListeners(): void {
     });
   });
 
-  // Soporte para teclado (opcional)
+  // Soporte para teclado
   document.addEventListener('keydown', (e) => {
     const key = e.key;
     if (!isNaN(Number(key)) || ['+', '-', '*', '/', '.'].includes(key)) {
